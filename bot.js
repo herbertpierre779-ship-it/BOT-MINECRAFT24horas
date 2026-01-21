@@ -90,6 +90,15 @@ function createBot() {
       const block = bot.blockAt(bot.entity.position);
       if (block && block.name.includes('water')) bot.setControlState('jump', true);
     }, 500);
+
+    // BROADCAST MESSAGES
+    safeInterval(() => {
+      bot.chat('/broadcast Não é permitido usar hacks de combate, como fly, kill aura ou qualquer outro tipo de hack de combate, baritone e dupe não sao permitidos . No entanto, x-ray e permitido. Lembre-se, o servidor é semi-anárquico. Qualquer dúvida, entre no nosso DC.');
+    }, 600000); // Every 10 minutes
+
+    safeInterval(() => {
+      bot.chat('/broadcast ENTRE NO NOSSO DISCORD: https://discord.com/invite/p7HRbtau5C');
+    }, 900000); // Every 15 minutes
   });
 
   // LOGS DE ERRO PARA VOCÊ VER NO CMD
