@@ -3,13 +3,13 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// O UptimeRobot precisa receber um status 200 OK para saber que o processo não travou
-app.get('/', (req, res) => {
-  res.status(200).send('Bot Online');
+// Aceita HEAD (UptimeRobot Free) e GET (Navegador)
+app.all('/', (req, res) => {
+  res.status(200).end(); 
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor HTTP rodando na porta ${PORT}`);
+  console.log(`[SISTEMA] Servidor de monitoramento ativo na porta ${PORT}`);
 });
 
 const PASSWORD = 'senha1234fgvirvj';
