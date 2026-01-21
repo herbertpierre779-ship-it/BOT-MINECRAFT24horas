@@ -1,0 +1,14 @@
+{
+  "name": "minecraft-bot",
+  "version": "1.0.0",
+  "description": "A Minecraft bot using Mineflayer with auto-reconnect and anti-AFK features",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.33.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
