@@ -1,25 +1,33 @@
 const mineflayer = require('mineflayer');
 const express = require('express');
-
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Aceita HEAD (UptimeRobot Free) e GET (Navegador)
 app.all('/', (req, res) => {
-  res.status(200).end();
+  res.status(200).end(); 
 });
 
-const options = {
-  host: 'INPERION.aternos.me', // IP do seu servidor
-  port: 14447,                  // Porta do servidor
-  username: 'INPERION_bot',     // Nome do bot
-  version: false                // O Mineflayer detecta a versão automaticamente
-};
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[SISTEMA] Servidor de monitoramento ativo na porta ${PORT}`);
+});
 
 const PASSWORD = 'senha1234fgvirvj';
 
 function createBot() {
-  const bot = mineflayer.createBot(options);
-  const timers = []; // Array to track intervals
+  const bot = mineflayer.createBot({
+    host: 'INPERION.aternos.me',
+    port: 14447,
+    username: 'INPERION_but',
+    version: '1.21'
+  });
+
+  let timers = [];
+  const safeInterval = (fn, ms) => {
+    const t = setInterval(() => { if (bot.entity) fn(); }, ms);
+    timers.push(t);
+    return t;
+  };
 
   bot.on('login', () => {
     console.log('[SISTEMA] Conectado ao servidor. Aguardando login...');
@@ -27,13 +35,14 @@ function createBot() {
     setTimeout(() => { if (bot.entity) bot.chat(`/login ${PASSWORD}`); }, 5000);
   });
 
-  bot.on('spawn', () => {
+  bot.once('spawn', () => {
+    console.log('[SISTEMA] Bot deu spawn e está pronto.');
+
     let lastPosition = bot.entity.position.clone();
     let stuckTime = 0;
 
     // DETECTOR DE TRAVAMENTO (Se não se moveu em 30 segundos, força movimento em direções aleatórias)
-    const stuckInterval = setInterval(() => {
-      if (!bot.entity) return; // Check if bot is still connected
+    safeInterval(() => {
       const currentPos = bot.entity.position;
       const distance = currentPos.distanceTo(lastPosition);
       if (distance < 0.1) { // Menos de 0.1 bloco de movimento
@@ -63,10 +72,9 @@ function createBot() {
       }
       lastPosition = currentPos.clone();
     }, 5000); // Verifica a cada 5 segundos
-    timers.push(stuckInterval);
 
     // ANTI-AFK AGRESSIVO (Aternos desliga se o bot não interagir)
-    const afkInterval = setInterval(() => {
+    safeInterval(() => {
       const actions = [
         () => { bot.setControlState('jump', true); setTimeout(() => bot.setControlState('jump', false), 500); },
         () => { bot.swingArm('right'); }, // Socar o ar conta como "interação com bloco" para alguns anti-afks
@@ -76,26 +84,21 @@ function createBot() {
       const randomAction = actions[Math.floor(Math.random() * actions.length)];
       randomAction();
     }, 15000); // A cada 15 segundos ele faz algo "humano"
-    timers.push(afkInterval);
 
     // AUTO-JUMP NA ÁGUA (Prevenir AFK de afogamento)
-    const waterInterval = setInterval(() => {
-      if (!bot.entity) return;
+    safeInterval(() => {
       const block = bot.blockAt(bot.entity.position);
       if (block && block.name.includes('water')) bot.setControlState('jump', true);
     }, 500);
-    timers.push(waterInterval);
 
     // BROADCAST MESSAGES
-    const broadcast1Interval = setInterval(() => {
-      bot.chat('/broadcast Não é permitido usar hacks de combate, como fly, kill aura ou qualquer outro tipo de hack de combate, baritone e dupe não são permitidos. No entanto, x-ray é permitido. Lembre-se, o servidor é semi-anárquico. Qualquer dúvida, entre no nosso DC.');
+    safeInterval(() => {
+      bot.chat('/broadcast Não é permitido usar hacks de combate, como fly, kill aura ou qualquer outro tipo de hack de combate, baritone e dupe não sao permitidos . No entanto, x-ray e permitido. Lembre-se, o servidor é semi-anárquico. Qualquer dúvida, entre no nosso DC.');
     }, 600000); // Every 10 minutes
-    timers.push(broadcast1Interval);
 
-    const broadcast2Interval = setInterval(() => {
+    safeInterval(() => {
       bot.chat('/broadcast ENTRE NO NOSSO DISCORD: https://discord.com/invite/p7HRbtau5C');
     }, 900000); // Every 15 minutes
-    timers.push(broadcast2Interval);
   });
 
   // LOGS DE ERRO PARA VOCÊ VER NO CMD
@@ -116,16 +119,4 @@ function createBot() {
   });
 }
 
-// Start the Express server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Start the bot
 createBot();
-
-
-
-
-
