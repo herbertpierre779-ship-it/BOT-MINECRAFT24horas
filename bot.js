@@ -1,11 +1,12 @@
 const mineflayer = require('mineflayer');
+const dns = require('dns');
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Aceita HEAD (UptimeRobot Free) e GET (Navegador)
 app.all('/', (req, res) => {
-  res.status(200).end(); 
+  res.status(200).end();
 });
 
 app.listen(PORT, '0.0.0.0', () => {
@@ -15,13 +16,26 @@ app.listen(PORT, '0.0.0.0', () => {
 const PASSWORD = 'senha1234fgvirvj';
 
 function createBot() {
-  const bot = mineflayer.createBot({
-    host: 'INPERION.aternos.me', // IP Numérico do Inperion (mais rápido)
-    port: 14447,
-    username: 'INPERION_bot',
-    version: '1.21.1', // Versão completa para evitar erros de socket
-    checkTimeoutInterval: 60000 // Aumenta o tempo de espera para 60 segundos
-  });
+  const host = 'INPERION.aternos.me';
+  const port = 14447;
+
+  // Verifica resolução DNS antes de conectar
+  dns.lookup(host, (err, address, family) => {
+    if (err) {
+      console.log(`[ERRO] Falha na resolução DNS para ${host}:`, err.message);
+      setTimeout(createBot, 30000);
+      return;
+    }
+    console.log(`[SISTEMA] DNS resolvido: ${host} -> ${address} (IPv${family})`);
+
+    const bot = mineflayer.createBot({
+      host: host,
+      port: port,
+      username: 'INPERION_bot',
+      version: false, // Auto-detecção da versão do servidor
+      connectTimeout: 30000, // 30 segundos para conectar
+      checkTimeoutInterval: 60000 // Aumenta o tempo de espera para 60 segundos
+    });
 
   let timers = [];
   const safeInterval = (fn, ms) => {
@@ -118,7 +132,9 @@ function createBot() {
     // 30 segundos de espera evita que o servidor bloqueie seu IP por "spam de login"
     setTimeout(createBot, 30000);
   });
+  });
 }
 
 createBot();
+
 
