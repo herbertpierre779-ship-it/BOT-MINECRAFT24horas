@@ -16,7 +16,7 @@ const PASSWORD = 'senha1234fgvirvj';
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: 'INPERION.aternos.me',
+    host: 'INPERION.aternos.me:14447',
     port: 14447,
     username: 'INPERION_but',
     version: '1.21'
@@ -120,3 +120,4 @@ function createBot() {
 }
 
 createBot();
+
