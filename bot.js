@@ -16,7 +16,7 @@ const PASSWORD = 'senha1234fgvirvj';
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: '51.158.111.156', // IP Numérico do Inperion (mais rápido)
+    host: 'INPERION.aternos.me', // IP Numérico do Inperion (mais rápido)
     port: 14447,
     username: 'INPERION_bot',
     version: '1.21.1', // Versão completa para evitar erros de socket
@@ -121,3 +121,4 @@ function createBot() {
 }
 
 createBot();
+
