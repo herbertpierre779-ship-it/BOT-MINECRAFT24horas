@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const mineflayer = require('mineflayer');
 const express = require('express');
@@ -6,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- CONFIGURAÇÕES ---
-const TOKEN = 'MTMwOTE0NDI4NTI2NTkyNDE2Ng.GreVZV.Sz3B0drQg8nIvJuqwLGqddw8K9ijc63Qzf1n6A';
+const TOKEN = process.env.DISCORD_TOKEN;
 const CANAL_ID = '1464578941841965056';
 const SERVER_IP = 'INPERION.aternos.me';
 const SERVER_PORT = 14447;
