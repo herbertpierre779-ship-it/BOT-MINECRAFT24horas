@@ -1,18 +1,37 @@
+const { Client, GatewayIntentBits } = require('discord.js');
 const mineflayer = require('mineflayer');
 const express = require('express');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Aceita HEAD (UptimeRobot Free) e GET (Navegador)
-app.all('/', (req, res) => {
-  res.status(200).end(); 
-});
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[SISTEMA] Servidor de monitoramento ativo na porta ${PORT}`);
-});
-
+// --- CONFIGURAÇÕES ---
+const TOKEN = 'MTMwOTE0NDI4NTI2NTkyNDE2Ng.GreVZV.Sz3B0drQg8nIvJuqwLGqddw8K9ijc63Qzf1n6A';
+const CANAL_ID = '1464578941841965056';
+const SERVER_IP = 'INPERION.aternos.me';
+const SERVER_PORT = 14447;
 const PASSWORD = 'senha1234fgvirvj';
+
+const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+// Servidor Web para manter o bot vivo
+app.all('/', (req, res) => { res.status(200).send("Bot Online"); });
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SISTEMA] Monitor ativo na porta ${PORT}`);
+});
+
+async function mudarNomeCanal(nome) {
+    try {
+        if (!discordClient.isReady()) return;
+        const channel = await discordClient.channels.fetch(CANAL_ID);
+        if (channel && channel.name !== nome) {
+            await channel.setName(nome);
+            console.log(`[DISCORD] Canal atualizado para: ${nome}`);
+        }
+    } catch (err) {
+        console.error("[ERRO DISCORD]", err.message);
+    }
+}
 
 function createBot() {
   const bot = mineflayer.createBot({
@@ -37,6 +56,14 @@ function createBot() {
 
   bot.once('spawn', () => {
     console.log('[SISTEMA] Bot deu spawn e está pronto.');
+
+    // Atualização de Status no Discord (A cada 6 minutos)
+    const statusTimer = setInterval(() => {
+        const playersCount = Object.keys(bot.players).length;
+        // -1 se você não quiser contar o próprio bot
+        mudarNomeCanal(`🟢 Online: ${playersCount} Jogadores`);
+    }, 360000);
+    timers.push(statusTimer);
 
     let lastPosition = bot.entity.position.clone();
     let stuckTime = 0;
@@ -112,6 +139,7 @@ function createBot() {
 
   bot.on('end', () => {
     console.log('[RECONECTAR] A conexão caiu. Limpando memória e tentando em 30 segundos...');
+    mudarNomeCanal('🔴 Status: Offline');
     // Limpa todos os intervalos para não acumular processos no CMD
     timers.forEach(clearInterval);
     // 30 segundos de espera evita que o servidor bloqueie seu IP por "spam de login"
@@ -119,4 +147,9 @@ function createBot() {
   });
 }
 
-createBot();
+discordClient.once('ready', () => {
+    console.log(`[DISCORD] Logado como ${discordClient.user.tag}`);
+    createBot();
+});
+
+discordClient.login(TOKEN);
