@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const mineflayer = require('mineflayer');
@@ -39,7 +40,8 @@ function createBot() {
     host: 'INPERION.aternos.me',
     port: 14447,
     username: 'INPERION_but',
-    version: '1.21'
+    version: '1.21',
+    acceptResourcePack: true
   });
 
   let timers = [];
@@ -48,6 +50,13 @@ function createBot() {
     timers.push(t);
     return t;
   };
+
+  // Aceitar pacote de recursos automaticamente
+  bot.on('resourcePack', (url, hash) => {
+    console.log('[RESOURCE PACK] Recebido:', url);
+    bot.acceptResourcePack();
+    console.log('[RESOURCE PACK] Aceito automaticamente.');
+  });
 
   bot.on('login', () => {
     console.log('[SISTEMA] Conectado ao servidor. Aguardando login...');
