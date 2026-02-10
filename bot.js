@@ -10,8 +10,10 @@ const PORT = process.env.PORT || 3000;
 // --- CONFIGURAÇÕES ---
 const TOKEN = process.env.DISCORD_TOKEN;
 const CANAL_ID = '1464578941841965056';
-const SERVER_IP = 'INPERION.aternos.me';
-const SERVER_PORT = 14447;
+const SERVER_IP = 'PudinSMP.play.hosting';
+const SERVER_PORT = 51739;
+//const SERVER_IP = 'INPERION.aternos.me';
+//const SERVER_PORT = 14447;
 const PASSWORD = 'senha1234fgvirvj';
 
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -163,3 +165,4 @@ discordClient.once('ready', () => {
 });
 
 discordClient.login(TOKEN);
+
