@@ -10,10 +10,10 @@ const PORT = process.env.PORT || 3000;
 // --- CONFIGURAÇÕES ---
 const TOKEN = process.env.DISCORD_TOKEN;
 const CANAL_ID = '1464578941841965056';
-//const SERVER_IP = 'PudinSMP.play.hosting';
-//const SERVER_PORT = 51739;
-const SERVER_IP = 'INPERION.aternos.me';
-const SERVER_PORT = 14447;
+const SERVER_IP = 'PudinSMP.play.hosting';
+const SERVER_PORT = 25565;
+//const SERVER_IP = 'INPERION.aternos.me';
+//const SERVER_PORT = 14447;
 const PASSWORD = 'senha1234fgvirvj';
 
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -39,8 +39,8 @@ async function mudarNomeCanal(nome) {
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: 'INPERION.aternos.me',
-    port: 14447,
+    host: 'PudinSMP.play.hosting',
+    port: 25565,
     username: 'INPERION_but',
     version: '1.21',
     acceptResourcePack: true
@@ -165,5 +165,6 @@ discordClient.once('ready', () => {
 });
 
 discordClient.login(TOKEN);
+
 
 
